@@ -6,10 +6,6 @@
 
 class PostcodeTest extends PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
-        parent::setUp();
-    }
 
     /**
      * Test converting a postcode to a constituency
@@ -18,7 +14,23 @@ class PostcodeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'Cities of London and Westminster',
-            postcode_to_constituency('SW1A 1AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency('SW1A 1AA')
+        );
+        $this->assertEquals(
+            'Cities of London and Westminster',
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency('SW1A1AA')
+        );
+        $this->assertEquals(
+            'Cities of London and Westminster',
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency('sw1a 1aa')
+        );
+        $this->assertEquals(
+            'Cities of London and Westminster',
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency(' SW1A 1AA ')
+        );
+        $this->assertEquals(
+            'Cities of London and Westminster',
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency('SW1 A1AA')
         );
     }
 
@@ -29,34 +41,7 @@ class PostcodeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             '',
-            postcode_to_constituency('ZZ00 ABC')
-        );
-    }
-
-    /**
-     * Test canonicalising a postcode
-     */
-    public function testCanonicalisePostcode()
-    {
-        $this->assertEquals(
-            'SW1A 1AA',
-            canonicalise_postcode('SW1A 1AA')
-        );
-        $this->assertEquals(
-            'SW1A 1AA',
-            canonicalise_postcode('SW1A1AA')
-        );
-        $this->assertEquals(
-            'SW1A 1AA',
-            canonicalise_postcode('sw1a 1aa')
-        );
-        $this->assertEquals(
-            'SW1A 1AA',
-            canonicalise_postcode(' SW1A 1AA ')
-        );
-        $this->assertEquals(
-            'SW1A 1AA',
-            canonicalise_postcode('SW1 A1AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeToConstituency('ZZ00 ABC')
         );
     }
 
@@ -67,11 +52,11 @@ class PostcodeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             true,
-            postcode_is_scottish('EH1 0AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeIsScottish('EH1 0AA')
         );
         $this->assertEquals(
             false,
-            postcode_is_scottish('SW1A 1AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeIsScottish('SW1A 1AA')
         );
     }
 
@@ -82,11 +67,11 @@ class PostcodeTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             true,
-            postcode_is_ni('BT1 0AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeIsNI('BT1 0AA')
         );
         $this->assertEquals(
             false,
-            postcode_is_ni('SW1A 1AA')
+            \MySociety\TheyWorkForYou\Utility\Postcode::postcodeIsNI('SW1A 1AA')
         );
     }
 
