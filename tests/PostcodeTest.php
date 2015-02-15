@@ -9,7 +9,6 @@ class PostcodeTest extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
         parent::setUp();
-        include_once('www/includes/postcode.inc');
     }
 
     /**
