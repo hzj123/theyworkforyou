@@ -37,6 +37,11 @@ And now all the files we'll include on every page.
 require_once dirname(__FILE__) . '/../../../vendor/autoload.php';
 
 include_once dirname(__FILE__) . '/../../../conf/general';
+
+// Initialise Monolog
+$eventLog = new \Monolog\Logger('events');
+$eventLog->pushHandler(new \Monolog\Handler\StreamHandler(APPLOGDIR . '/events.log', \Monolog\Logger::INFO));
+
 include_once INCLUDESPATH . 'utility.php';
 twfy_debug_timestamp("after including utility.php");
 
