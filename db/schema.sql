@@ -478,3 +478,12 @@ CREATE TABLE `tokens` (
     PRIMARY KEY (`token`)
 );
 
+-- For things like banners, front page highlighting etc --
+
+CREATE TABLE `editorial` (
+    `item` varchar(50) NOT NULL,
+    `value` text,
+    KEY `item` (`item`)
+);
+
+

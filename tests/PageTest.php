@@ -8,6 +8,8 @@ include_once 'FetchPageTestCase.php';
 class PageTest extends FetchPageTestCase
 {
 
+    protected $db;
+
     /**
      * Connects to the testing database.
      */
@@ -17,6 +19,7 @@ class PageTest extends FetchPageTestCase
         $username = OPTION_TWFY_DB_USER;
         $password = OPTION_TWFY_DB_PASS;
         $pdo = new PDO($dsn, $username, $password);
+        $this->db = $pdo;
         return $this->createDefaultDBConnection($pdo, OPTION_TWFY_DB_NAME);
     }
 
@@ -81,6 +84,14 @@ class PageTest extends FetchPageTestCase
     {
         $page = $this->fetch_page( array( 'pid' => 13, 'url' => '/mp/13/test_speaker/buckingham' ) );
         $this->assertContains('<span class="party SPK">Speaker</span>', $page);
+    }
+
+    public function testBanner() {
+        $page = $this->fetch_page( array( 'url' => '/' ) );
+        $this->assertNotContains('This is a banner', $page);
+        $this->db->exec("INSERT INTO editorial ( item, value ) VALUES ( 'banner', 'This is a banner' )");
+        $page = $this->fetch_page( array( 'url' => '/' ) );
+        $this->assertContains('This is a banner', $page);
     }
 
 }

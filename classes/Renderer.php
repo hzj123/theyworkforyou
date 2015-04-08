@@ -422,6 +422,9 @@ class Renderer
         $data['footer_links']['international'] = self::get_menu_links(array ('newzealand', 'australia', 'ireland', 'mzalendo'));
         $data['footer_links']['tech'] = self::get_menu_links(array ('code', 'api', 'data', 'pombola', 'devmailinglist', 'irc'));
 
+        # banner text
+        $data['banner_text'] = self::get_banner_text();
+
         # Robots header
         if (DEVSITE) {
             $data['robots'] = 'noindex,nofollow';
@@ -441,6 +444,33 @@ class Renderer
         require_once INCLUDESPATH . 'easyparliament/templates/html/header.php';
         require_once INCLUDESPATH . 'easyparliament/templates/html/' . $template . '.php';
         require_once INCLUDESPATH . 'easyparliament/templates/html/footer.php';
+    }
+
+    private static function get_banner_text() {
+        $text = NULL;
+
+        global $memcache;
+        if (!$memcache) {
+            $memcache = new \Memcache;
+            $memcache->connect('localhost', 11211);
+        }
+        // see http://php.net/manual/en/memcache.get.php#112056 for explanation of this
+        $was_found = false;
+        $text = $memcache->get(OPTION_TWFY_DB_NAME . ':banner', $was_found);
+
+        if ( $was_found === false ) {
+            $db = new \ParlDB;
+            $q = $db->query("SELECT value FROM editorial WHERE item = 'banner'");
+            if ($q->rows) {
+                $text = $q->field(0, 'value');
+                if ( trim($text) == '' ) {
+                    $text = NULL;
+                }
+                $memcache->set(OPTION_TWFY_DB_NAME . ':banner', $text, MEMCACHE_COMPRESSED, 86400);
+            }
+        }
+
+        return $text;
     }
 
     /**

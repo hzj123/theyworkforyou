@@ -279,16 +279,46 @@ class PAGE {
 <?php
     }
 
+    public function banner_text() {
+        $text = NULL;
+
+        global $memcache;
+        if (!$memcache) {
+            $memcache = new \Memcache;
+            $memcache->connect('localhost', 11211);
+        }
+        // see http://php.net/manual/en/memcache.get.php#112056 for explanation of this
+        $was_found = false;
+        $text = $memcache->get(OPTION_TWFY_DB_NAME . ':banner', $was_found);
+
+        if ( $was_found === false ) {
+            $db = new \ParlDB;
+            $q = $db->query("SELECT value FROM editorial WHERE item = 'banner'");
+            if ($q->rows) {
+                $text = $q->field(0, 'value');
+                if ( trim($text) == '' ) {
+                    $text = NULL;
+                }
+                $memcache->set(OPTION_TWFY_DB_NAME . ':banner', $text, MEMCACHE_COMPRESSED, 86400);
+            }
+        }
+
+        return $text;
+    }
+
     public function page_body() {
         global $this_page;
+        $banner_text = $this->banner_text();
 
         // Start the body, put in the page headings.
         ?>
 <body>
 
+<?php if ( $banner_text ) { ?>
 <div id="surveyPromoBanner" style="clear:both;padding:1em;margin-top:24px;background:#DDD;">
-Find out who your candidates in the 2015 General Election are at <a href="https://yournextmp.com">YourNextMP</a>
+<?= $banner_text ?>
 </div>
+<? } ?>
 
 
 <div id="fb-root"></div>
